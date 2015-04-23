@@ -55,12 +55,12 @@
     setMotorSpeed(LEFT, leftSpeed);
     setMotorSpeed(RIGHT, rightSpeed);
   }
-#elif defined POLOLU_MC33926
+#elif defined ARDUINO_MOTOR_DRIVER_R3
   /* Include the Pololu library */
-  #include "DualMC33926MotorShield.h"
+  #include "ArduinoMotorShieldR3.h"
 
   /* Create the motor driver object */
-  DualMC33926MotorShield drive;
+  ArduinoMotorShieldR3 drive;
   
   /* Wrap the motor driver initialization */
   void initMotorController() {
