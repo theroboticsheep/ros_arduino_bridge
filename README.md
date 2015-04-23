@@ -22,6 +22,8 @@ the PC. The base controller requires the use of a motor controller and encoders 
 
 * Pololu VNH5019 dual motor controller shield (http://www.pololu.com/catalog/product/2502) or Pololu MC33926 dual motor shield (http://www.pololu.com/catalog/product/2503).
 
+* Arduino Motor Driver R3 controller shield (http://www.arduino.cc/en/Main/ArduinoMotorShieldR3) using driver: https://github.com/theroboticsheep/arduino-motor-shield-r3
+
 * Robogaia Mega Encoder shield
 (http://www.robogaia.com/two-axis-encoder-counter-mega-shield-version-2.html) or on-board wheel encoder counters.
 

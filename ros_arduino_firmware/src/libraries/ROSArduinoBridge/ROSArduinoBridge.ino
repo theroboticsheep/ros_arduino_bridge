@@ -55,6 +55,9 @@
 
    /* The Pololu MC33926 dual motor driver shield */
    //#define POLOLU_MC33926
+   
+   /* The Arduino Motor Driver R3 shield */
+   //#define ARDUINO_MOTOR_DRIVER_R3
 
    /* The RoboGaia encoder shield */
    #define ROBOGAIA
