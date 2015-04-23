@@ -442,7 +442,7 @@ where id is the index of the servo as defined in the Arduino sketch (servos.h)
 
 Using the on-board wheel encoder counters (Arduino Uno only)
 ------------------------------------------------------------
-The firmware supports on-board wheel encoder counters for Arduino Uno.
+The firmware supports on-board wheel encoder counters for Arduino Uno and Mega 2560.
 This allows connecting wheel encoders directly to the Arduino board, without the need for any additional wheel encoder counter equipment (such as a RoboGaia encoder shield).
 
 For speed, the code is directly addressing specific Atmega328p ports and interrupts, making this implementation Atmega328p (Arduino Uno) dependent. (It should be easy to adapt for other boards/AVR chips though.)
