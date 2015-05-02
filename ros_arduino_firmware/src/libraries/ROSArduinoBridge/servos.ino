@@ -69,9 +69,9 @@ void SweepServo::setTargetPosition(int position)
 
 
 // Accessor for servo object
-Servo SweepServo::getServo()
+int SweepServo::getServoPosition()
 {
-  return this->servo;
+  return this->currentPositionDegrees;
 }
 
 

@@ -191,7 +191,7 @@ int runCommand() {
     Serial.println("OK");
     break;
   case SERVO_READ:
-    Serial.println(servos[arg1].getServo().read());
+    Serial.println(servos[arg1].getServoPosition());
     break;
 #endif
     

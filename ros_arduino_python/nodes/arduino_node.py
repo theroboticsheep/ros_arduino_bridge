@@ -166,8 +166,7 @@ class ArduinoROS():
         return ServoWriteResponse()
     
     def ServoReadHandler(self, req):
-        self.controller.servo_read(req.id)
-        return ServoReadResponse()
+        return ServoReadResponse(self.controller.servo_read(req.id))
     
     def DigitalSetDirectionHandler(self, req):
         self.controller.pin_mode(req.pin, req.direction)
