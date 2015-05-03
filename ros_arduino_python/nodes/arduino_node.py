@@ -24,6 +24,7 @@ from ros_arduino_python.arduino_driver import Arduino
 from ros_arduino_python.arduino_sensors import *
 from ros_arduino_msgs.srv import *
 from ros_arduino_python.base_controller import BaseController
+from ros_arduino_python.joint_controller import JointController
 from geometry_msgs.msg import Twist
 import os, time
 import thread
@@ -49,6 +50,8 @@ class ArduinoROS():
         self.sensorstate_rate = int(rospy.get_param("~sensorstate_rate", 10))
         
         self.use_base_controller = rospy.get_param("~use_base_controller", False)
+        
+        self.use_joint_controller = rospy.get_param("~use_joint_controller", False)
         
         # Set up the time for publishing the next SensorState message
         now = rospy.Time.now()
@@ -77,10 +80,10 @@ class ArduinoROS():
         # A service to turn a digital sensor on or off
         rospy.Service('~digital_write', DigitalWrite, self.DigitalWriteHandler)
        
-	# A service to set pwm values for the pins
-	rospy.Service('~analog_write', AnalogWrite, self.AnalogWriteHandler)
+        # A service to set pwm values for the pins
+        rospy.Service('~analog_write', AnalogWrite, self.AnalogWriteHandler)
 
-	# Initialize the controlller
+        # Initialize the controlller
         self.controller = Arduino(self.port, self.baud, self.timeout)
         
         # Make the connection
@@ -128,19 +131,28 @@ class ArduinoROS():
         # Initialize the base controller if used
         if self.use_base_controller:
             self.myBaseController = BaseController(self.controller, self.base_frame)
-    
+        
+        # Initialize the joint controller if used
+        if self.use_joint_controller:
+            self.myJointController = JointController(self.controller)
+     
         # Start polling the sensors and base controller
         while not rospy.is_shutdown():
             for sensor in self.mySensors:
                 mutex.acquire()
                 sensor.poll()
                 mutex.release()
-                    
+
             if self.use_base_controller:
                 mutex.acquire()
                 self.myBaseController.poll()
                 mutex.release()
-            
+
+            if self.use_joint_controller:
+                mutex.acquire()
+                self.myJointController.poll()
+                mutex.release()
+
             # Publish all sensor values on a single topic for convenience
             now = rospy.Time.now()
             
