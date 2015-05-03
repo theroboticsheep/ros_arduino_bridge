@@ -3,13 +3,13 @@
       <rosparam file="$(find ros_arduino_python)/config/my_arduino_params.yaml" command="load" />
    </node>
    
-   <node name="right_gripper_controller" pkg="ros_arduino_python" type="gripper_controller">
+   <node name="right_gripper_controller" pkg="ros_arduino_python" type="gripper_controller.py" output="screen">
       <param name="model" value="parallel"/>
       <param name="joint_name" value="right_gripper_joint"/>
       <param name="pad_width" value="0.013"/>
    </node>
    
-   <node name="left_gripper_controller" pkg="ros_arduino_python" type="gripper_controller">
+   <node name="left_gripper_controller" pkg="ros_arduino_python" type="gripper_controller.py" output="screen">
       <param name="model" value="parallel"/>
       <param name="joint_name" value="left_gripper_joint"/>
       <param name="pad_width" value="0.013"/>
