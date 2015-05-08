@@ -28,6 +28,7 @@ void SweepServo::initServo(
     int initPosition)
 {
   this->servo.attach(servoPin);
+  this->servo.write(initPosition);
   this->stepDelayMs = stepDelayMs;
   this->currentPositionDegrees = initPosition;
   this->targetPositionDegrees = initPosition;
