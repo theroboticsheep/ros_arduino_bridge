@@ -19,8 +19,8 @@ base_frame: base_link
 # === Robot drivetrain parameters
 wheel_diameter: 0.0625
 wheel_track: 0.2794
-encoder_resolution: 8356 # http://www.robotshop.com/en/pololu-12v-29-1-gear-motor-encoder.html
-gear_reduction: 29 #29:1
+encoder_resolution: 1856 # http://www.robotshop.com/en/pololu-12v-29-1-gear-motor-encoder.html
+gear_reduction: 1
 motors_reversed: False
 
 # === PID parameters
