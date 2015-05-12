@@ -45,28 +45,28 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *********************************************************************/
 
-//#define USE_BASE      // Enable the base controller code
-#undef USE_BASE     // Disable the base controller code
+#define USE_BASE      // Enable the base controller code
+//#undef USE_BASE     // Disable the base controller code
 
 /* Define the motor controller and encoder library you are using */
 #ifdef USE_BASE
    /* The Pololu VNH5019 dual motor driver shield */
-   #define POLOLU_VNH5019
+   //#define POLOLU_VNH5019
 
    /* The Pololu MC33926 dual motor driver shield */
    //#define POLOLU_MC33926
    
    /* The Arduino Motor Driver R3 shield */
-   //#define ARDUINO_MOTOR_DRIVER_R3
+   #define ARDUINO_MOTOR_DRIVER_R3
 
    /* The RoboGaia encoder shield */
-   #define ROBOGAIA
+   //#define ROBOGAIA
 
    /* Encoders directly attached to Arduino Uno board */
    //#define ARDUINO_UNO_ENC_COUNTER
 
   /* Encoders directly attached to Arduino Mega 1280/2560 board */
-  //#define ARDUINO_MEGA_ENC_COUNTER
+  #define ARDUINO_MEGA_ENC_COUNTER
 #endif
 
 #define USE_SERVOS  // Enable use of PWM servos as defined in servos.h
@@ -196,11 +196,14 @@ int runCommand() {
       arg2 = HOBBY_SERVO_MIN;
     if (arg2 > HOBBY_SERVO_MAX)
       arg2 = HOBBY_SERVO_MAX;
+    // map servo range from -pi/2 to pi/2 for easier joint config
+    arg2 = map(arg2,-90,90,0,180);
     servos[arg1].setTargetPosition(arg2);
     Serial.println("OK");
     break;
   case SERVO_READ:
-    Serial.println(servos[arg1].getServoPosition());
+    // map servo range to -pi/2 to pi/2 for easier joint config
+    Serial.println(map(servos[arg1].getServoPosition(),0,180,-90,90));
     break;
 #endif
     

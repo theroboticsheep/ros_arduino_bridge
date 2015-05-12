@@ -29,8 +29,8 @@ import sys, traceback
 from serial.serialutil import SerialException
 from serial import Serial
 
-SERVO_MAX = 180
-SERVO_MIN = 0
+SERVO_MAX = 90
+SERVO_MIN = -90
 
 class Arduino:
     ''' Configuration Parameters

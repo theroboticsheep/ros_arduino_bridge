@@ -56,7 +56,7 @@ class HobbyServo:
 
     def setCurrentFeedback(self, reading):
         """ Update angle in radians by reading from servo """
-        if reading > 0 and reading < pi:     # check validity
+        if reading >= -(pi/2) and reading <= (pi/2):     # check validity
             last_angle = self.position
             self.position = reading
             # update velocity estimate
