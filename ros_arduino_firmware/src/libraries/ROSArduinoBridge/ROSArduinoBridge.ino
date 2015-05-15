@@ -192,12 +192,12 @@ int runCommand() {
     break;
 #ifdef USE_SERVOS
   case SERVO_WRITE:
+    // map servo range from -pi/2 to pi/2 for easier joint config
+    arg2 = map(arg2,-90,90,0,180);
     if (arg2 < HOBBY_SERVO_MIN)
       arg2 = HOBBY_SERVO_MIN;
     if (arg2 > HOBBY_SERVO_MAX)
       arg2 = HOBBY_SERVO_MAX;
-    // map servo range from -pi/2 to pi/2 for easier joint config
-    arg2 = map(arg2,-90,90,0,180);
     servos[arg1].setTargetPosition(arg2);
     Serial.println("OK");
     break;
