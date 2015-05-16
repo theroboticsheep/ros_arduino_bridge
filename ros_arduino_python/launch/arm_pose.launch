@@ -1,7 +1,11 @@
 <launch>
-   <arg name="joint_num" default="0" />
-   <arg name="joint_angle" default="0" />
-   <rosparam param="joint_num" subst_value="True">$(arg joint_num)</rosparam>
-   <rosparam param="joint_angle" subst_value="True">$(arg joint_angle)</rosparam>
-   <node name="arm_pose" pkg="ros_arduino_python" type="arm_pose_node.py" output="screen" />
+   <arg name="animation" default="~proto-demo" />
+   <arg name="sequence" default="sequence1" />
+   <arg name="pose_name" default="~home" />
+   <rosparam param="animation" subst_value="True">$(arg animation)</rosparam>
+   <rosparam param="sequence" subst_value="True">$(arg sequence)</rosparam>
+   <rosparam param="pose_name" subst_value="True">$(arg pose_name)</rosparam>
+   <node name="arm_pose" pkg="ros_arduino_python" type="arm_pose_node.py" output="screen">
+      <rosparam file="$(find ros_arduino_python)/config/arm_poses.yaml" command="load" />
+   </node>
 </launch>
