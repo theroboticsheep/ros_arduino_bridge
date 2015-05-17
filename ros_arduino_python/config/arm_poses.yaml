@@ -1,5 +1,6 @@
 proto-demo: {
-  sequence1: [home, up, home-open, home-closed],
+  sequence1: [up, home-open, up, home-closed],
+  
   home: {
       right_armroot_to_armlink1:  {joint_num: 0,  joint_angle: 0.7853},
       right_armlink1_to_armlink2: {joint_num: 1,  joint_angle: -1.5705},
@@ -12,21 +13,6 @@ proto-demo: {
       left_armlink2_to_armlink3:  {joint_num: 8,  joint_angle: -1.5705},
       left_armlink3_to_armlink4:  {joint_num: 9,  joint_angle: 1.5705},
       left_armlink4_to_armlink5:  {joint_num: 10, joint_angle: -0.5235},
-      left_gripper_joint:         {joint_num: 11, joint_angle: 0}
-  },
-  
-  up: {
-      right_armroot_to_armlink1:  {joint_num: 0,  joint_angle: 0},
-      right_armlink1_to_armlink2: {joint_num: 1,  joint_angle: 0},
-      right_armlink2_to_armlink3: {joint_num: 2,  joint_angle: 0},
-      right_armlink3_to_armlink4: {joint_num: 3,  joint_angle: 0},
-      right_armlink4_to_armlink5: {joint_num: 4,  joint_angle: 0},
-      right_gripper_joint:        {joint_num: 5,  joint_angle: 0},
-      left_armroot_to_armlink1:   {joint_num: 6,  joint_angle: 0},
-      left_armlink1_to_armlink2:  {joint_num: 7,  joint_angle: 0},
-      left_armlink2_to_armlink3:  {joint_num: 8,  joint_angle: 0},
-      left_armlink3_to_armlink4:  {joint_num: 9,  joint_angle: 0},
-      left_armlink4_to_armlink5:  {joint_num: 10, joint_angle: 0},
       left_gripper_joint:         {joint_num: 11, joint_angle: 0}
   },
   
@@ -58,5 +44,20 @@ proto-demo: {
       left_armlink3_to_armlink4:  {joint_num: 9,  joint_angle: 1.5705},
       left_armlink4_to_armlink5:  {joint_num: 10, joint_angle: -0.5235},
       left_gripper_joint:         {joint_num: 11, joint_angle: -1.1779}
+  },
+  
+  up: {
+      right_armroot_to_armlink1:  {joint_num: 0,  joint_angle: 0},
+      right_armlink1_to_armlink2: {joint_num: 1,  joint_angle: 0},
+      right_armlink2_to_armlink3: {joint_num: 2,  joint_angle: 0},
+      right_armlink3_to_armlink4: {joint_num: 3,  joint_angle: 0},
+      right_armlink4_to_armlink5: {joint_num: 4,  joint_angle: 0},
+      right_gripper_joint:        {joint_num: 5,  joint_angle: 0},
+      left_armroot_to_armlink1:   {joint_num: 6,  joint_angle: 0},
+      left_armlink1_to_armlink2:  {joint_num: 7,  joint_angle: 0},
+      left_armlink2_to_armlink3:  {joint_num: 8,  joint_angle: 0},
+      left_armlink3_to_armlink4:  {joint_num: 9,  joint_angle: 0},
+      left_armlink4_to_armlink5:  {joint_num: 10, joint_angle: 0},
+      left_gripper_joint:         {joint_num: 11, joint_angle: 0}
   }
 }
