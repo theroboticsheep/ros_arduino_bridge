@@ -31,7 +31,7 @@ import thread
 
 class ArduinoROS():
     def __init__(self):
-        rospy.init_node('Arduino', log_level=rospy.DEBUG)
+        rospy.init_node('Arduino')
                 
         # Cleanup when termniating the node
         rospy.on_shutdown(self.shutdown)
