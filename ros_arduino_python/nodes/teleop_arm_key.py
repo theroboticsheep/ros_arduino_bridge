@@ -2,8 +2,6 @@
 
 import rospy
 from ros_arduino_msgs.srv import *
-import os, time
-import thread
 import sys, select, termios, tty
 
 msg = """
@@ -29,7 +27,7 @@ def getKey():
     return key
 
 if __name__ == '__main__':
-    rospy.init_node('arm_pose')
+    rospy.init_node('teleop_arm_key')
     settings = termios.tcgetattr(sys.stdin)
     
     animation = rospy.get_param("animation", "~proto-demo")
@@ -46,7 +44,7 @@ if __name__ == '__main__':
     rospy.loginfo(msg)
     
     done = False
-    while(1):
+    while 1:
         for pose in poses[sequence]:
             key = getKey()
             # ctrl-c to quit
@@ -59,4 +57,4 @@ if __name__ == '__main__':
         if done:
             break
 
-    rospy.signal_shutdown("Shutting down arm_pose node")
+    rospy.signal_shutdown("Shutting down teleop_arm_key node")

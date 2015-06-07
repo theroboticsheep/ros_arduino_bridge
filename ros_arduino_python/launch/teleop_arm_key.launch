@@ -1,0 +1,9 @@
+<launch>
+   <arg name="animation" default="~proto-demo" />
+   <arg name="sequence" default="sequence1" />
+   <rosparam param="animation" subst_value="True">$(arg animation)</rosparam>
+   <rosparam param="sequence" subst_value="True">$(arg sequence)</rosparam>
+   <node name="arm_pose" pkg="ros_arduino_python" type="teleop_arm_key.py" output="screen">
+      <rosparam file="$(find ros_arduino_python)/config/arm_poses.yaml" command="load" />
+   </node>
+</launch>
