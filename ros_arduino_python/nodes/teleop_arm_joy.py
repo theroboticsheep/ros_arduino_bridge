@@ -7,7 +7,7 @@ from sensor_msgs.msg import Joy
 
 class TeleopArmJoy():
     def __init__(self):
-        msg = """
+        self.msg = """
         ***************************************************
         *                                                 *
         * Press 'A' button to advance to the next pose.   *
@@ -35,7 +35,7 @@ class TeleopArmJoy():
          
         rospy.loginfo("Waiting for rosservice: servo_write")
         rospy.wait_for_service('/arduino/servo_write')
-        self.servo_write = rospy.ServiceProxy('/arduino/servo_write', self.ServoWrite)
+        self.servo_write = rospy.ServiceProxy('/arduino/servo_write', ServoWrite)
         rospy.loginfo("Connected to rosservice: servo_write")
         rospy.loginfo(self.msg)
         
@@ -51,7 +51,7 @@ class TeleopArmJoy():
                 rospy.loginfo("Pose set: " + pose)
                 self.button_a_pressed = False
                 for joint, params in self.poses[pose].iteritems():
-                    servo_write(params['joint_num'],params['joint_angle'])
+                    self.servo_write(params['joint_num'],params['joint_angle'])
             if done:
                 break
      
