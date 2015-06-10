@@ -17,25 +17,13 @@ class JoyCMDR():
         *                                                 *
         ***************************************************
         """
-        
+
         self.pub = rospy.Publisher('joy', Joy, queue_size=10)
         rospy.init_node('joy_cmdr')
-        self.settings = termios.tcgetattr(sys.stdin)
         rospy.loginfo(self.msg)
         
         self.joy_msg = Joy()
-        self.parseString()
 
-        rospy.signal_shutdown("Shutting down joy_cmdr node")
-
-    def getKey(self):
-        tty.setraw(sys.stdin.fileno())
-        select.select([sys.stdin], [], [], 0)
-        key = sys.stdin.read(1)
-        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, self.settings)
-        return key
-    
-    def parseString(self):
         # define the function blocks
         def state_init(self):
             if self.key == '[':
@@ -52,7 +40,6 @@ class JoyCMDR():
             if self.key == ']':
                 self.joy_msg.buttons = [int(x) for x in self.line.split(',') if x.strip()]
                 self.joy_msg.header.stamp = rospy.Time.now()
-                rospy.loginfo(self.joy_msg)
                 self.pub.publish(self.joy_msg)
                 self.state = 0
                 self.line = ""
@@ -68,11 +55,13 @@ class JoyCMDR():
         self.line = ""
         
         while 1:
-            self.key = self.getKey()
+            self.key = sys.stdin.read(1)
             if self.key == '\x03':
                 return
             # call switch
             states[self.state](self)
+            
+        rospy.signal_shutdown("Shutting down joy_cmdr node")
 
 if __name__ == '__main__':
     joyCMDR = JoyCMDR()
