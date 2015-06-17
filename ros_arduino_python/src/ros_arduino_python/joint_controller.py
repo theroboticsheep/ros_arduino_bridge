@@ -42,7 +42,7 @@ class HobbyServo:
         self.id = int(rospy.get_param(n+"id"))
         self.range = rospy.get_param(n+"range", 180)
         
-        print "Joint added: " + n + ", id: " + str(self.id) + " range: " + str(self.range)
+        print "Joint added: " + n + ", id: " + str(self.id) + " range: " + str(self.range) + '\n'
 
         self.dirty = False                      # newly updated position?
         self.position = 0.0                     # current position, as returned by servo (radians)

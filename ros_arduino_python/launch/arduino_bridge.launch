@@ -1,6 +1,6 @@
 <launch>
-   <node name="arduino" pkg="ros_arduino_python" type="arduino_node.py" output="screen">
-      <rosparam file="$(find ros_arduino_python)/config/arduino_params_joints.yaml" command="load" />
+   <node name="arduino_bridge" pkg="ros_arduino_python" type="arduino_node.py" output="screen">
+      <rosparam file="$(find ros_arduino_python)/config/arduino_params.yaml" command="load" />
    </node>
    
    <node name="right_gripper_controller" pkg="ros_arduino_python" type="gripper_controller.py" output="screen">
