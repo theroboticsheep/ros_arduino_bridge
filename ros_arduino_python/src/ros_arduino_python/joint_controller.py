@@ -42,7 +42,7 @@ class HobbyServo:
         self.id = int(rospy.get_param(n+"id"))
         self.range = rospy.get_param(n+"range", 180)
         
-        print "Joint added: " + n + ", id: " + str(self.id) + " range: " + str(self.range) + '\n'
+        print "Joint added: " + n + ", id: " + str(self.id) + " range: " + str(self.range)
 
         self.dirty = False                      # newly updated position?
         self.position = 0.0                     # current position, as returned by servo (radians)
@@ -88,10 +88,11 @@ class HobbyServo:
 """ Class to receive Twist commands and publish Odometry data """
 class JointController:
     def __init__(self, arduino):
+        self.arduino = arduino
         
         self.joints = list()
         for name in rospy.get_param("~joints", dict()).keys():
-            self.joints.append(HobbyServo(self, name))
+            self.joints.append(HobbyServo(self, self.arduino, name))
 
         self.last = rospy.Time.now()
 
@@ -99,8 +100,6 @@ class JointController:
         self.rate = rospy.get_param("~joint_controller_rate", 10.0)
         self.t_delta = rospy.Duration(1.0/self.rate)
         self.t_next = rospy.Time.now() + self.t_delta
-
-        self.arduino = arduino
 
         # action server
         self.name = 'follow_joint_trajectory'
@@ -110,7 +109,7 @@ class JointController:
         rospy.Subscriber(self.name+'/command', JointTrajectory, self.commandCb)
         self.executing = False
 
-        rospy.loginfo("Started FollowController ("+self.name+"). Joints: " + str(self.joints))
+        rospy.loginfo("Started FollowController: " + self.name)
         self.server.start()
         
         self.pub = rospy.Publisher('joint_states', JointState, queue_size=5)
