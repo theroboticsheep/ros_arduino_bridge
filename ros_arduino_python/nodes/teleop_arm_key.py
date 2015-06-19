@@ -38,8 +38,8 @@ if __name__ == '__main__':
     poses = rospy.get_param(animation, dict({}))
     
     rospy.loginfo("Waiting for rosservice: servo_write")
-    rospy.wait_for_service('/arduino/servo_write')
-    servo_write = rospy.ServiceProxy('/arduino/servo_write', ServoWrite)
+    rospy.wait_for_service('/arduino_bridge/servo_write')
+    servo_write = rospy.ServiceProxy('/arduino_bridge/servo_write', ServoWrite)
     rospy.loginfo("Connected to rosservice: servo_write")
     rospy.loginfo(msg)
     

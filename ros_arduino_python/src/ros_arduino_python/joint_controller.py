@@ -33,16 +33,16 @@ from trajectory_msgs.msg import JointTrajectory
 
 class HobbyServo:
 
-    def __init__(self, controller, name, ns="~joints"):
+    def __init__(self, controller, name):
         self.controller = controller
         self.name = name
         
-        n = ns+"/"+name+"/"
+        ns = "~joints_"+controller.controller_side+"/"+name+"/"
         
-        self.id = int(rospy.get_param(n+"id"))
-        self.range = rospy.get_param(n+"range", 180)
+        self.id = int(rospy.get_param(ns+"id"))
+        self.range = rospy.get_param(ns+"range", 180)
         
-        print "Joint added: " + n + ", id: " + str(self.id) + " range: " + str(self.range)
+        print "Joint added: " + ns + ", id: " + str(self.id) + " range: " + str(self.range)
 
         self.dirty = False                      # newly updated position?
         self.position = 0.0                     # current position, as returned by servo (radians)
