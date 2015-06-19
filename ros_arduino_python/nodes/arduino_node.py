@@ -51,7 +51,8 @@ class ArduinoROS():
         
         self.use_base_controller = rospy.get_param("~use_base_controller", False)
         
-        self.use_joint_controller = rospy.get_param("~use_joint_controller", False)
+        self.use_joint_controller_right = rospy.get_param("~use_joint_controller_right", False)
+        self.use_joint_controller_left = rospy.get_param("~use_joint_controller_left", False)
         
         # Set up the time for publishing the next SensorState message
         now = rospy.Time.now()
@@ -133,8 +134,12 @@ class ArduinoROS():
             self.myBaseController = BaseController(self.controller, self.base_frame)
         
         # Initialize the joint controller if used
-        if self.use_joint_controller:
-            self.myJointController = JointController(self.controller)
+        if self.use_joint_controller_right:
+            self.myJointControllerRight = JointController(self.controller, "right")
+            
+        # Initialize the joint controller if used
+        if self.use_joint_controller_left:
+            self.myJointControllerLeft = JointController(self.controller, "left")
      
         # Start polling the sensors and base controller
         while not rospy.is_shutdown():
@@ -148,9 +153,14 @@ class ArduinoROS():
                 self.myBaseController.poll()
                 mutex.release()
 
-            if self.use_joint_controller:
+            if self.use_joint_controller_right:
                 mutex.acquire()
-                self.myJointController.poll()
+                self.myJointControllerRight.poll()
+                mutex.release()
+
+            if self.use_joint_controller_left:
+                mutex.acquire()
+                self.myJointControllerLeft.poll()
                 mutex.release()
 
             # Publish all sensor values on a single topic for convenience

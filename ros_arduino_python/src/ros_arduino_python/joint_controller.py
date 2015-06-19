@@ -87,12 +87,13 @@ class HobbyServo:
  
 """ Class to receive Twist commands and publish Odometry data """
 class JointController:
-    def __init__(self, arduino):
+    def __init__(self, arduino, controller_side):
         self.arduino = arduino
+        self.controller_side = controller_side
         
         self.joints = list()
-        for name in rospy.get_param("~joints", dict()).keys():
-            self.joints.append(HobbyServo(self, self.arduino, name))
+        for name in rospy.get_param("~joints_"+self.controller_side, dict()).keys():
+            self.joints.append(HobbyServo(self, name))
 
         self.last = rospy.Time.now()
 
@@ -102,7 +103,7 @@ class JointController:
         self.t_next = rospy.Time.now() + self.t_delta
 
         # action server
-        self.name = 'follow_joint_trajectory'
+        self.name = self.controller_side+'_arm_controller/follow_joint_trajectory'
         self.server = actionlib.SimpleActionServer(self.name, FollowJointTrajectoryAction, execute_cb=self.actionCb, auto_start=False)
 
         # good old trajectory

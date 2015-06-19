@@ -51,16 +51,20 @@ sensors: {
 }
 
 
-use_joint_controller: True
+use_joint_controller_right: True
+use_joint_controller_left: True
 joint_controller_rate: 10
 
-joints: {
+joints_right: {
     right_armroot_to_armlink1:  {id: 0},
     right_armlink1_to_armlink2: {id: 1},
     right_armlink2_to_armlink3: {id: 2},
     right_armlink3_to_armlink4: {id: 3},
     right_armlink4_to_armlink5: {id: 4},
-    right_gripper_joint:        {id: 5},
+    right_gripper_joint:        {id: 5}
+}
+
+joints_left: {
     left_armroot_to_armlink1:   {id: 6},
     left_armlink1_to_armlink2:  {id: 7},
     left_armlink2_to_armlink3:  {id: 8},
