@@ -56,19 +56,25 @@ use_joint_controller_left: True
 joint_controller_rate: 10
 
 joints_right: {
-    right_armroot_to_armlink1:  {id: 0},
-    right_armlink1_to_armlink2: {id: 1},
-    right_armlink2_to_armlink3: {id: 2},
-    right_armlink3_to_armlink4: {id: 3},
-    right_armlink4_to_armlink5: {id: 4},
-    right_gripper_joint:        {id: 5}
+    right_armroot_to_armlink1:  {id: 0, range: 180},
+    right_armlink1_to_armlink2: {id: 1, range: 180},
+    right_armlink2_to_armlink3: {id: 2, range: 180},
+    right_armlink3_to_armlink4: {id: 3, range: 180},
+    right_armlink4_to_armlink5: {id: 4, range: 180}
+}
+
+gripper_right: {
+    right_gripper_joint:        {id: 5, range: 135}
 }
 
 joints_left: {
-    left_armroot_to_armlink1:   {id: 6},
-    left_armlink1_to_armlink2:  {id: 7},
-    left_armlink2_to_armlink3:  {id: 8},
-    left_armlink3_to_armlink4:  {id: 9},
-    left_armlink4_to_armlink5:  {id: 10},
-    left_gripper_joint:         {id: 11}
+    left_armroot_to_armlink1:   {id: 6, range: 180},
+    left_armlink1_to_armlink2:  {id: 7, range: 180},
+    left_armlink2_to_armlink3:  {id: 8, range: 180},
+    left_armlink3_to_armlink4:  {id: 9, range: 180},
+    left_armlink4_to_armlink5:  {id: 10, range: 180}
+}
+
+gripper_left: {
+    left_gripper_joint:         {id: 11, range: 135}
 }

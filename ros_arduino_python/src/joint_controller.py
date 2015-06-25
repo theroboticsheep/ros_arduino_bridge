@@ -37,10 +37,10 @@ class HobbyServo:
         self.controller = controller
         self.name = name
         
-        ns = "~joints_"+controller.controller_side+"/"+name+"/"
+        ns = controller.joint_dict+"/"+name+"/"
         
         self.id = int(rospy.get_param(ns+"id"))
-        self.range = rospy.get_param(ns+"range", 180)
+        self.range = int(rospy.get_param(ns+"range", 180))
         
         print "Joint added: " + ns + ", id: " + str(self.id) + " range: " + str(self.range)
 
@@ -87,13 +87,16 @@ class HobbyServo:
  
 """ Class to receive Twist commands and publish Odometry data """
 class JointController:
-    def __init__(self, arduino, controller_side):
+    def __init__(self, arduino, joint_dict, controller_name):
         self.arduino = arduino
-        self.controller_side = controller_side
+        self.joint_dict = joint_dict
+        self.controller_name = controller_name
         
         self.joints = list()
-        for name in rospy.get_param("~joints_"+self.controller_side, dict()).keys():
+        self.joint_names = list()
+        for name in rospy.get_param(self.joint_dict, dict()).keys():
             self.joints.append(HobbyServo(self, name))
+            self.joint_names.append(name)
 
         self.last = rospy.Time.now()
 
@@ -103,7 +106,7 @@ class JointController:
         self.t_next = rospy.Time.now() + self.t_delta
 
         # action server
-        self.name = self.controller_side+'_arm_controller/follow_joint_trajectory'
+        self.name = self.controller_name + '/follow_joint_trajectory'
         self.server = actionlib.SimpleActionServer(self.name, FollowJointTrajectoryAction, execute_cb=self.actionCb, auto_start=False)
 
         # good old trajectory
@@ -144,14 +147,14 @@ class JointController:
         rospy.loginfo(self.name + ": Action goal recieved.")
         traj = goal.trajectory
 
-        if set(self.joints) != set(traj.joint_names):
-            for j in self.joints:
+        if set(self.joint_names) != set(traj.joint_names):
+            for j in self.joint_names:
                 if j not in traj.joint_names:
-                    msg = "Trajectory joint names does not match action controlled joints." + str(traj.joint_names)
+                    msg = "Trajectory joint: \n" + str(j) + "\n does not match action controlled joints: \n" + str(traj.joint_names)
                     rospy.logerr(msg)
                     self.server.set_aborted(text=msg)
-                    return
             rospy.logwarn("Extra joints in trajectory")
+            return
 
         if not traj.points:
             msg = "Trajectory empy."

@@ -135,11 +135,13 @@ class ArduinoROS():
         
         # Initialize the joint controller if used
         if self.use_joint_controller_right:
-            self.myJointControllerRight = JointController(self.controller, "right")
+            self.myJointControllerRight = JointController(self.controller, "~joints_right", "right_arm_controller")
+            self.myJointControllerRightGripper = JointController(self.controller, "~gripper_right", "right_gripper_controller")
             
         # Initialize the joint controller if used
         if self.use_joint_controller_left:
-            self.myJointControllerLeft = JointController(self.controller, "left")
+            self.myJointControllerLeft = JointController(self.controller, "~joints_left", "left_arm_controller")
+            self.myJointControllerLeftGripper = JointController(self.controller, "~gripper_left", "left_gripper_controller")
      
         # Start polling the sensors and base controller
         while not rospy.is_shutdown():
@@ -156,11 +158,13 @@ class ArduinoROS():
             if self.use_joint_controller_right:
                 mutex.acquire()
                 self.myJointControllerRight.poll()
+                self.myJointControllerRightGripper.poll()
                 mutex.release()
 
             if self.use_joint_controller_left:
                 mutex.acquire()
                 self.myJointControllerLeft.poll()
+                self.myJointControllerLeftGripper.poll()
                 mutex.release()
 
             # Publish all sensor values on a single topic for convenience
