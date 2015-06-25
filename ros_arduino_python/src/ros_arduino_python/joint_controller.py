@@ -47,9 +47,9 @@ class HobbyServo:
         self.dirty = False                      # newly updated position?
         self.position = 0.0                     # current position, as returned by servo (radians)
         self.desired = 0.0                      # desired position (radians)
-        self.last_cmd = 0.0                     # last position sent (radians)
+        self.cmd_prev = 0.0                     # previous position sent (radians)
         self.velocity = 0.0                     # moving speed
-        self.last = rospy.Time.now()
+        self.time_prev = rospy.Time.now()
         
         # ROS interfaces
         rospy.Subscriber(name+'/command', Float64, self.commandCb)
@@ -57,17 +57,17 @@ class HobbyServo:
     def setCurrentFeedback(self, reading):
         """ Update angle in radians by reading from servo """
         if reading >= -(pi/2) and reading <= (pi/2):     # check validity
-            last_angle = self.position
+            angle_prev = self.position
             self.position = reading
             # update velocity estimate
             t = rospy.Time.now()
-            self.velocity = (self.position - last_angle)/((t - self.last).to_nsec()/1000000000.0)
-            self.last = t
+            self.velocity = (self.position - angle_prev)/((t - self.time_prev).to_nsec()/1000000000.0)
+            self.time_prev = t
         else:
             rospy.logdebug("Invalid read of servo: id " + str(self.id) + ", value " + str(reading))
             return
         if not self.controller.active:
-            self.last_cmd = self.position
+            self.cmd_prev = self.position
 
     def setControlOutput(self, position):
         """ Set the position that controller is moving to. 
@@ -97,8 +97,6 @@ class JointController:
         for name in rospy.get_param(self.joint_dict, dict()).keys():
             self.joints.append(HobbyServo(self, name))
             self.joint_names.append(name)
-
-        self.last = rospy.Time.now()
 
         # parameters: throttle rate and geometry
         self.rate = rospy.get_param("~joint_controller_rate", 10.0)
@@ -163,7 +161,7 @@ class JointController:
             return
 
         try:
-            indexes = [traj.joint_names.index(joint) for joint in self.joints]
+            indexes = [traj.joint_names.index(joint) for joint in self.joint_names]
         except ValueError as val:
             msg = "Trajectory invalid."
             rospy.logerr(msg)
@@ -191,7 +189,7 @@ class JointController:
         rospy.logdebug(traj)
         # carry out trajectory
         try:
-            indexes = [traj.joint_names.index(joint) for joint in self.joints]
+            indexes = [traj.joint_names.index(joint) for joint in self.joint_names]
         except ValueError as val:
             rospy.logerr("Invalid joint in trajectory.")
             return False
@@ -202,14 +200,14 @@ class JointController:
             start = rospy.Time.now()
 
         r = rospy.Rate(self.rate)
-        last = [ self.joints[joint].position for joint in self.joints ]
+        position_prev = [ joint.position for joint in self.joints ]
         for point in traj.points:
             while rospy.Time.now() + rospy.Duration(0.01) < start:
                 rospy.sleep(0.01)
             desired = [ point.positions[k] for k in indexes ]
             endtime = start + point.time_from_start
             while rospy.Time.now() + rospy.Duration(0.01) < endtime:
-                err = [ (d-c) for d,c in zip(desired,last) ]
+                err = [ (d-c) for d,c in zip(desired,position_prev) ]
                 velocity = [ abs(x / (self.rate * (endtime - rospy.Time.now()).to_sec())) for x in err ]
                 rospy.logdebug(err)
                 for i in range(len(self.joints)):
@@ -220,8 +218,8 @@ class JointController:
                             cmd = top
                         elif cmd < -top:
                             cmd = -top
-                        last[i] += cmd
-                        self.joints[i].setControlOutput(last[i])
+                        position_cmd = position_prev[i] + cmd
+                        self.joints[i].setControlOutput(position_cmd)
                     else:
                         velocity[i] = 0
                 r.sleep()
