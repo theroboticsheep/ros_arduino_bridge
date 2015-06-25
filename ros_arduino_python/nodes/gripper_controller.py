@@ -32,25 +32,32 @@
 import rospy, actionlib
 import thread
 
+from math import radians
 from control_msgs.msg import GripperCommandAction
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Float64
-from math import asin
 
 
 class ParallelGripperModel:
     """ One servo to open/close parallel jaws, typically via linkage. """
 
     def __init__(self):
-        self.center = rospy.get_param('~center', 0.0)
-        self.scale = rospy.get_param('~scale', 1.0)
+        self.gripper_width_m = rospy.get_param('~gripper_width_m', 0.036)
+        self.gripper_width_deg = rospy.get_param('~gripper_width_deg', 135.0)
         self.joint_name = rospy.get_param('~joint_name', 'gripper_joint')
 
         # publishers
         self.pub = rospy.Publisher(self.joint_name+'/command', Float64, queue_size=5)
 
+    def scaleInput(self, input):
+        in_closed = self.pad_width/2
+        in_open = 0
+        out_closed = -radians(self.gripper_width_deg)/2
+        out_open = radians(self.gripper_width_deg)/2
+        return ((input - in_closed) * (out_open - out_closed) / (in_open - in_closed) + out_closed)
+
     def setCommand(self, command):
-        self.pub.publish((command.position * self.scale) + self.center)
+        self.pub.publish(self.scaleInput(command.position))
 
     def getPosition(self, joint_states):
         return 0.0
