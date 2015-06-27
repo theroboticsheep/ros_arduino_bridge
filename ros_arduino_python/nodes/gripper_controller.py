@@ -50,7 +50,7 @@ class ParallelGripperModel:
         self.pub = rospy.Publisher(self.joint_name+'/command', Float64, queue_size=5)
 
     def scaleInput(self, input):
-        in_closed = self.pad_width/2
+        in_closed = self.gripper_width_m/2
         in_open = 0
         out_closed = -radians(self.gripper_width_deg)/2
         out_open = radians(self.gripper_width_deg)/2
