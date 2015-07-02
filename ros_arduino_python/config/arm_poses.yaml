@@ -1,5 +1,5 @@
 proto-demo: {
-  sequence1: [rest],
+  sequence1: [home, up, rest],
   sequence_a: [pick-right, rest-right],
   sequence_b: [pick-left, rest-left],
   sequence_x: [rest],

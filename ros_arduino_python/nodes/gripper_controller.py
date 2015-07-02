@@ -76,13 +76,15 @@ class GripperActionController:
         try:
             model = rospy.get_param('~model')
         except:
-            rospy.logerr('no model specified, exiting')
+            msg = 'No gripper model specified, exiting'
+            rospy.logerr(msg)
             exit()
 
         if model == 'parallel':
             self.model = ParallelGripperModel()
         else:
-            rospy.logerr('unknown model specified, exiting')
+            msg = 'Unknown gripper model specified, exiting'
+            rospy.logerr(msg)
             exit()
 
         # subscribe to joint_states
@@ -95,19 +97,22 @@ class GripperActionController:
 
     def actionCb(self, goal):
         """ Take an input command of width to open gripper. """
-        rospy.loginfo('Gripper controller action goal recieved:%f' % goal.command.position)
+        msg = 'Gripper Controller action goal recieved:%f' % goal.command.position
+        rospy.loginfo(msg)
         # send command to gripper
         self.model.setCommand(goal.command)
         # publish feedback
         while True:
             if self.server.is_preempt_requested():
                 self.server.set_preemtped()
-                rospy.loginfo('Gripper Controller: Preempted.')
+                msg = 'Gripper Controller preempted.'
+                rospy.loginfo(msg)
                 return
             # TODO: get joint position, break when we have reached goal
             break
         self.server.set_succeeded()
-        rospy.loginfo('Gripper Controller: Succeeded.')
+        msg = 'Gripper Controller succeeded.'
+        rospy.loginfo(msg)
 
     def stateCb(self, msg):
         self.state = msg
@@ -116,5 +121,6 @@ if __name__=='__main__':
     try:
         GripperActionController()
     except rospy.ROSInterruptException:
-        rospy.loginfo('Hasta la Vista...')
+        msg = 'Gripper Controller failed to load'
+        rospy.logerr(msg)
 

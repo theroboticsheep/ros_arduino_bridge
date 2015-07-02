@@ -34,22 +34,22 @@ class BaseController:
     def __init__(self, arduino, base_frame):
         self.arduino = arduino
         self.base_frame = base_frame
-        self.rate = float(rospy.get_param("~base_controller_rate", 10))
-        self.timeout = rospy.get_param("~base_controller_timeout", 1.0)
+        self.rate = float(rospy.get_param('~base_controller_rate', 10))
+        self.timeout = rospy.get_param('~base_controller_timeout', 1.0)
         self.stopped = False
                  
         pid_params = dict()
-        pid_params['wheel_diameter'] = rospy.get_param("~wheel_diameter", "") 
-        pid_params['wheel_track'] = rospy.get_param("~wheel_track", "")
-        pid_params['encoder_resolution'] = rospy.get_param("~encoder_resolution", "") 
-        pid_params['gear_reduction'] = rospy.get_param("~gear_reduction", 1.0)
-        pid_params['Kp'] = rospy.get_param("~Kp", 20)
-        pid_params['Kd'] = rospy.get_param("~Kd", 12)
-        pid_params['Ki'] = rospy.get_param("~Ki", 0)
-        pid_params['Ko'] = rospy.get_param("~Ko", 50)
+        pid_params['wheel_diameter'] = rospy.get_param('~wheel_diameter', '') 
+        pid_params['wheel_track'] = rospy.get_param('~wheel_track', '')
+        pid_params['encoder_resolution'] = rospy.get_param('~encoder_resolution', '') 
+        pid_params['gear_reduction'] = rospy.get_param('~gear_reduction', 1.0)
+        pid_params['Kp'] = rospy.get_param('~Kp', 20)
+        pid_params['Kd'] = rospy.get_param('~Kd', 12)
+        pid_params['Ki'] = rospy.get_param('~Ki', 0)
+        pid_params['Ko'] = rospy.get_param('~Ko', 50)
         
         self.accel_limit = rospy.get_param('~accel_limit', 0.1)
-        self.motors_reversed = rospy.get_param("~motors_reversed", False)
+        self.motors_reversed = rospy.get_param('~motors_reversed', False)
         
         # Set up PID parameters and check for missing values
         self.setup_pid(pid_params)
@@ -81,7 +81,7 @@ class BaseController:
         self.last_cmd_vel = now
 
         # subscriptions
-        rospy.Subscriber("cmd_vel", Twist, self.cmdVelCallback)
+        rospy.Subscriber('cmd_vel', Twist, self.cmdVelCallback)
         
         # Clear any old odometry info
         self.arduino.reset_encoders()
@@ -90,15 +90,17 @@ class BaseController:
         self.odomPub = rospy.Publisher('odom', Odometry, queue_size=5)
         self.odomBroadcaster = TransformBroadcaster()
         
-        rospy.loginfo("Started base controller for a base of " + str(self.wheel_track) + "m wide with " + str(self.encoder_resolution) + " ticks per rev")
-        rospy.loginfo("Publishing odometry data at: " + str(self.rate) + " Hz using " + str(self.base_frame) + " as base frame")
+        msg = 'Started base controller for a base of ' + str(self.wheel_track) + 'm wide with ' + str(self.encoder_resolution) + ' ticks per rev'
+        rospy.loginfo(msg)
+        msg = 'Publishing odometry data at: ' + str(self.rate) + ' Hz using ' + str(self.base_frame) + ' as base frame'
+        rospy.loginfo(msg)
         
     def setup_pid(self, pid_params):
         # Check to see if any PID parameters are missing
         missing_params = False
         for param in pid_params:
-            if pid_params[param] == "":
-                print("*** PID Parameter " + param + " is missing. ***")
+            if pid_params[param] == '':
+                rospy.logwarn('*** PID Parameter ' + param + ' is missing. ***')
                 missing_params = True
         
         if missing_params:
@@ -124,7 +126,7 @@ class BaseController:
                 left_enc, right_enc = self.arduino.get_encoder_counts()
             except:
                 self.bad_encoder_count += 1
-                rospy.logerr("Encoder exception count: " + str(self.bad_encoder_count))
+                rospy.logerr('Encoder exception count: ' + str(self.bad_encoder_count))
                 return
                             
             dt = now - self.then
@@ -168,11 +170,11 @@ class BaseController:
                 (quaternion.x, quaternion.y, quaternion.z, quaternion.w),
                 rospy.Time.now(),
                 self.base_frame,
-                "odom"
+                'odom'
                 )
     
             odom = Odometry()
-            odom.header.frame_id = "odom"
+            odom.header.frame_id = 'odom'
             odom.child_frame_id = self.base_frame
             odom.header.stamp = now
             odom.pose.pose.position.x = self.x

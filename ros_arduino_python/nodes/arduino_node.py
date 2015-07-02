@@ -5,6 +5,9 @@
     
     Created for the Pi Robot Project: http://www.pirobot.org
     Copyright (c) 2012 Patrick Goebel.  All rights reserved.
+    
+    Modified: Nathaniel Gallinger
+    Added: Joint controller, gripper controller
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -36,23 +39,23 @@ class ArduinoROS():
         # Cleanup when termniating the node
         rospy.on_shutdown(self.shutdown)
         
-        self.port = rospy.get_param("~port", "/dev/ttyACM0")
-        self.baud = int(rospy.get_param("~baud", 57600))
-        self.timeout = rospy.get_param("~timeout", 0.5)
-        self.base_frame = rospy.get_param("~base_frame", 'base_link')
+        self.port = rospy.get_param('~port', '/dev/ttyACM0')
+        self.baud = int(rospy.get_param('~baud', 57600))
+        self.timeout = rospy.get_param('~timeout', 0.5)
+        self.base_frame = rospy.get_param('~base_frame', 'base_link')
 
         # Overall loop rate: should be faster than fastest sensor rate
-        self.rate = int(rospy.get_param("~rate", 50))
+        self.rate = int(rospy.get_param('~rate', 50))
         r = rospy.Rate(self.rate)
 
         # Rate at which summary SensorState message is published. Individual sensors publish
         # at their own rates.        
-        self.sensorstate_rate = int(rospy.get_param("~sensorstate_rate", 10))
+        self.sensorstate_rate = int(rospy.get_param('~sensorstate_rate', 10))
         
-        self.use_base_controller = rospy.get_param("~use_base_controller", False)
+        self.use_base_controller = rospy.get_param('~use_base_controller', False)
         
-        self.use_joint_controller_right = rospy.get_param("~use_joint_controller_right", False)
-        self.use_joint_controller_left = rospy.get_param("~use_joint_controller_left", False)
+        self.use_joint_controller_right = rospy.get_param('~use_joint_controller_right', False)
+        self.use_joint_controller_left = rospy.get_param('~use_joint_controller_left', False)
         
         # Set up the time for publishing the next SensorState message
         now = rospy.Time.now()
@@ -90,7 +93,8 @@ class ArduinoROS():
         # Make the connection
         self.controller.connect()
         
-        rospy.loginfo("Connected to Arduino on port " + self.port + " at " + str(self.baud) + " baud")
+        msg = 'Connected to Arduino on port ' + self.port + ' at ' + str(self.baud) + ' baud'
+        rospy.loginfo(msg)
      
         # Reserve a thread lock
         mutex = thread.allocate_lock()
@@ -98,7 +102,7 @@ class ArduinoROS():
         # Initialize any sensors
         self.mySensors = list()
         
-        sensor_params = rospy.get_param("~sensors", dict({}))
+        sensor_params = rospy.get_param('~sensors', dict({}))
         
         for name, params in sensor_params.iteritems():
             # Set the direction to input if not specified
@@ -107,9 +111,9 @@ class ArduinoROS():
             except:
                 params['direction'] = 'input'
                 
-            if params['type'] == "Ping":
+            if params['type'] == 'Ping':
                 sensor = Ping(self.controller, name, params['pin'], params['rate'], self.base_frame)
-            elif params['type'] == "GP2D12":
+            elif params['type'] == 'GP2D12':
                 sensor = GP2D12(self.controller, name, params['pin'], params['rate'], self.base_frame)
             elif params['type'] == 'Digital':
                 sensor = DigitalSensor(self.controller, name, params['pin'], params['rate'], self.base_frame, direction=params['direction'])
@@ -122,12 +126,12 @@ class ArduinoROS():
             elif params['type'] == 'PhidgetsCurrent':
                 sensor = PhidgetsCurrent(self.controller, name, params['pin'], params['rate'], self.base_frame)
                 
-#                if params['type'] == "MaxEZ1":
+#                if params['type'] == 'MaxEZ1':
 #                    self.sensors[len(self.sensors)]['trigger_pin'] = params['trigger_pin']
 #                    self.sensors[len(self.sensors)]['output_pin'] = params['output_pin']
 
             self.mySensors.append(sensor)
-            rospy.loginfo(name + " " + str(params))
+            rospy.loginfo(name + ' ' + str(params))
               
         # Initialize the base controller if used
         if self.use_base_controller:
@@ -135,13 +139,13 @@ class ArduinoROS():
         
         # Initialize the joint controller if used
         if self.use_joint_controller_right:
-            self.myJointControllerRight = JointController(self.controller, "~joints_right", "right_arm_controller")
-            self.myJointControllerRightGripper = JointController(self.controller, "~gripper_right", "right_gripper_controller")
+            self.myJointControllerRight = JointController(self.controller, '~joints_right', 'right_arm_controller')
+            self.myJointControllerRightGripper = JointController(self.controller, '~gripper_right', 'right_gripper_controller')
             
         # Initialize the joint controller if used
         if self.use_joint_controller_left:
-            self.myJointControllerLeft = JointController(self.controller, "~joints_left", "left_arm_controller")
-            self.myJointControllerLeftGripper = JointController(self.controller, "~gripper_left", "left_gripper_controller")
+            self.myJointControllerLeft = JointController(self.controller, '~joints_left', 'left_arm_controller')
+            self.myJointControllerLeftGripper = JointController(self.controller, '~gripper_left', 'left_gripper_controller')
      
         # Start polling the sensors and base controller
         while not rospy.is_shutdown():
@@ -209,12 +213,12 @@ class ArduinoROS():
     def shutdown(self):
         # Stop the robot
         try:
-            rospy.loginfo("Stopping the robot...")
+            rospy.loginfo('Stopping the robot...')
             self.cmd_vel_pub.Publish(Twist())
             rospy.sleep(2)
         except:
             pass
-        rospy.loginfo("Shutting down Arduino Node...")
+        rospy.loginfo('Shutting down Arduino Node...')
         
 if __name__ == '__main__':
     myArduino = ArduinoROS()

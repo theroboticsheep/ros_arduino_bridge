@@ -2,6 +2,7 @@
 
 """
     A joint controller class for the Arduino microcontroller
+    Assumes standard hobby servos
     
     Borrowed heavily from Mike Feguson's ArbotiX code.
     
@@ -37,12 +38,13 @@ class HobbyServo:
         self.controller = controller
         self.name = name
         
-        ns = controller.joint_dict+"/"+name+"/"
+        ns = controller.joint_dict+'/'+name+'/'
         
-        self.id = int(rospy.get_param(ns+"id"))
-        self.range = int(rospy.get_param(ns+"range", 180))
+        self.id = int(rospy.get_param(ns+'id'))
+        self.range = int(rospy.get_param(ns+'range', 180))
         
-        print "Joint added: " + ns + ", id: " + str(self.id) + " range: " + str(self.range)
+        msg = 'Joint added: ' + ns + ', id: ' + str(self.id) + ' range: ' + str(self.range)
+        rospy.loginfo(msg)
 
         self.dirty = False                      # newly updated position?
         self.position = 0.0                     # current position, as returned by servo (radians)
@@ -56,7 +58,8 @@ class HobbyServo:
 
     def setCurrentFeedback(self, reading):
         """ Update angle in radians by reading from servo """
-        if reading >= -(pi/2) and reading <= (pi/2):     # check validity
+        # check validity
+        if reading >= -(pi/2) and reading <= (pi/2):
             angle_prev = self.position
             self.position = reading
             # update velocity estimate
@@ -64,7 +67,8 @@ class HobbyServo:
             self.velocity = (self.position - angle_prev)/((t - self.time_prev).to_nsec()/1000000000.0)
             self.time_prev = t
         else:
-            rospy.logdebug("Invalid read of servo: id " + str(self.id) + ", value " + str(reading))
+            msg = 'Invalid read of servo: id ' + str(self.id) + ', value ' + str(reading)
+            rospy.logdebug(msg)
             return
         if not self.controller.active:
             self.cmd_prev = self.position
@@ -74,7 +78,8 @@ class HobbyServo:
             Returns output value in radians. """
         self.desired = position
         self.dirty = True
-        return int(position)
+        msg = self.name + ': new desired position set - ' + position
+        rospy.logdebug(msg)
 
     def commandCb(self, req):
         """ Float64 style command input. """
@@ -99,7 +104,7 @@ class JointController:
             self.joint_names.append(name)
 
         # parameters: throttle rate and geometry
-        self.rate = rospy.get_param("~joint_controller_rate", 10.0)
+        self.rate = rospy.get_param('~joint_controller_rate', 10.0)
         self.t_delta = rospy.Duration(1.0/self.rate)
         self.t_next = rospy.Time.now() + self.t_delta
 
@@ -111,7 +116,8 @@ class JointController:
         rospy.Subscriber(self.name+'/command', JointTrajectory, self.commandCb)
         self.executing = False
 
-        rospy.loginfo("Started FollowController: " + self.name)
+        msg = 'Started FollowController: ' + self.name
+        rospy.loginfo(msg)
         self.server.start()
         
         self.pub = rospy.Publisher('joint_states', JointState, queue_size=5)
@@ -128,6 +134,8 @@ class JointController:
                 if joint.dirty:
                     self.arduino.servo_write(joint.id, joint.desired)
                     joint.dirty = False
+                    msg = joint.name + ': position set - ' + joint.desired
+                    rospy.logdebug(msg)
 
             msg = JointState()
             msg.header.stamp = rospy.Time.now()
@@ -142,20 +150,22 @@ class JointController:
             self.t_next = rospy.Time.now() + self.t_delta
 
     def actionCb(self, goal):
-        rospy.loginfo(self.name + ": Action goal recieved.")
+        msg = self.name + ': Action goal recieved.'
+        rospy.loginfo(msg)
         traj = goal.trajectory
 
         if set(self.joint_names) != set(traj.joint_names):
             for j in self.joint_names:
                 if j not in traj.joint_names:
-                    msg = "Trajectory joint: \n" + str(j) + "\n does not match action controlled joints: \n" + str(traj.joint_names)
+                    msg = 'Trajectory joint: \n' + str(j) + '\n does not match action controlled joints: \n' + str(traj.joint_names)
                     rospy.logerr(msg)
                     self.server.set_aborted(text=msg)
-            rospy.logwarn("Extra joints in trajectory")
+            msg = 'Extra joints in trajectory'
+            rospy.logwarn(msg)
             return
 
         if not traj.points:
-            msg = "Trajectory empy."
+            msg = 'Trajectory empy.'
             rospy.logerr(msg)
             self.server.set_aborted(text=msg)
             return
@@ -163,7 +173,7 @@ class JointController:
         try:
             indexes = [traj.joint_names.index(joint) for joint in self.joint_names]
         except ValueError as val:
-            msg = "Trajectory invalid."
+            msg = 'Trajectory invalid.'
             rospy.logerr(msg)
             self.server.set_aborted(text=msg)
             return
@@ -171,27 +181,31 @@ class JointController:
         if self.executeTrajectory(traj):   
             self.server.set_succeeded()
         else:
-            self.server.set_aborted(text="Execution failed.")
+            self.server.set_aborted(text='Execution failed.')
 
-        rospy.loginfo(self.name + ": Done.")
+        msg = self.name + ': Trajectory execution complete.'
+        rospy.loginfo(msg)
 
     def commandCb(self, msg):
         # don't execute if executing an action
         if self.server.is_active():
-            rospy.loginfo(self.name+": Received trajectory, but action is active")
+            msg = self.name+': Received trajectory, but action is active'
+            rospy.loginfo(msg)
             return
         self.executing = True
         self.executeTrajectory(msg)
         self.executing = False    
 
     def executeTrajectory(self, traj):
-        rospy.loginfo("Executing trajectory")
+        msg = 'Executing trajectory'
+        rospy.loginfo(msg)
         rospy.logdebug(traj)
         # carry out trajectory
         try:
             indexes = [traj.joint_names.index(joint) for joint in self.joint_names]
         except ValueError as val:
-            rospy.logerr("Invalid joint in trajectory.")
+            msg = 'Invalid joint in trajectory.'
+            rospy.logerr(msg)
             return False
 
         # get starting timestamp, MoveIt uses 0, need to fill in
@@ -202,14 +216,15 @@ class JointController:
         r = rospy.Rate(self.rate)
         position_prev = [ joint.position for joint in self.joints ]
         for point in traj.points:
+            # wait until start
             while rospy.Time.now() + rospy.Duration(0.01) < start:
                 rospy.sleep(0.01)
             desired = [ point.positions[k] for k in indexes ]
             endtime = start + point.time_from_start
+            # run until end
             while rospy.Time.now() + rospy.Duration(0.01) < endtime:
                 err = [ (d-c) for d,c in zip(desired,position_prev) ]
                 velocity = [ abs(x / (self.rate * (endtime - rospy.Time.now()).to_sec())) for x in err ]
-                rospy.logdebug(err)
                 for i in range(len(self.joints)):
                     if err[i] > 0.001 or err[i] < -0.001:
                         cmd = err[i] 
@@ -223,6 +238,7 @@ class JointController:
                     else:
                         velocity[i] = 0
                 r.sleep()
+
         return True
 
     def active(self):

@@ -21,13 +21,13 @@ class TeleopArmJoy():
         """
         
         rospy.init_node('teleop_arm_joy')
-        self.animation = rospy.get_param("animation", "~proto-demo")
+        self.animation = rospy.get_param('animation', '~proto-demo')
         self.poses = rospy.get_param(self.animation, dict({}))
          
-        rospy.loginfo("Waiting for rosservice: servo_write")
+        rospy.loginfo('Waiting for rosservice: servo_write')
         rospy.wait_for_service('/arduino_bridge/servo_write')
         self.servo_write = rospy.ServiceProxy('/arduino_bridge/servo_write', ServoWrite)
-        rospy.loginfo("Connected to rosservice: servo_write")
+        rospy.loginfo('Connected to rosservice: servo_write')
         rospy.loginfo(self.msg)
         
         self.t_delta = rospy.Duration(.25)
@@ -43,24 +43,24 @@ class TeleopArmJoy():
         self.t_left_stick  = rospy.Time.now() + self.t_delta
         self.t_right_stick = rospy.Time.now() + self.t_delta
         
-        self.iter_a = cycle(self.poses["sequence_a"])
-        self.iter_b = cycle(self.poses["sequence_b"])
-        self.iter_x = cycle(self.poses["sequence_x"])
-        self.iter_y = cycle(self.poses["sequence_y"])
-        self.iter_LB = cycle(self.poses["sequence_LB"])
-        self.iter_RB = cycle(self.poses["sequence_RB"])
-        self.iter_back  = cycle(self.poses["sequence_back"])
-        self.iter_start = cycle(self.poses["sequence_start"])
-        self.iter_power = cycle(self.poses["sequence_power"])
-        self.iter_left_stick  = cycle(self.poses["sequence_left_stick"])
-        self.iter_right_stick = cycle(self.poses["sequence_right_stick"])
+        self.iter_a = cycle(self.poses['sequence_a'])
+        self.iter_b = cycle(self.poses['sequence_b'])
+        self.iter_x = cycle(self.poses['sequence_x'])
+        self.iter_y = cycle(self.poses['sequence_y'])
+        self.iter_LB = cycle(self.poses['sequence_LB'])
+        self.iter_RB = cycle(self.poses['sequence_RB'])
+        self.iter_back  = cycle(self.poses['sequence_back'])
+        self.iter_start = cycle(self.poses['sequence_start'])
+        self.iter_power = cycle(self.poses['sequence_power'])
+        self.iter_left_stick  = cycle(self.poses['sequence_left_stick'])
+        self.iter_right_stick = cycle(self.poses['sequence_right_stick'])
         
-        rospy.Subscriber("joy", Joy, self.callback)
+        rospy.Subscriber('joy', Joy, self.callback)
         
         rospy.spin()
 
     def doPose(self, pose):
-        rospy.loginfo("Pose set: " + pose)
+        rospy.loginfo('Pose set: ' + pose)
         for joint, params in self.poses[pose].iteritems():
             temp = 1
             self.servo_write(params['joint_num'],params['joint_angle'])

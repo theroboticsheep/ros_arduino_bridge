@@ -39,7 +39,7 @@ class MessageType:
     BOOL = 5
     
 class Sensor(object):
-    def __init__(self, controller, name, pin, rate, frame_id, direction="input", **kwargs):
+    def __init__(self, controller, name, pin, rate, frame_id, direction='input', **kwargs):
         self.controller = controller
         self.name = name
         self.pin = pin
@@ -55,7 +55,7 @@ class Sensor(object):
     def poll(self):
         now = rospy.Time.now()
         if now > self.t_next:
-            if self.direction == "input":
+            if self.direction == 'input':
                 try:
                     self.value = self.read_value()
                 except:
@@ -87,9 +87,9 @@ class AnalogSensor(Sensor):
         self.msg = Analog()
         self.msg.header.frame_id = self.frame_id
         
-        self.pub = rospy.Publisher("~sensor/" + self.name, Analog, queue_size=5)
+        self.pub = rospy.Publisher('~sensor/' + self.name, Analog, queue_size=5)
         
-        if self.direction == "output":
+        if self.direction == 'output':
             self.controller.pin_mode(self.pin, OUTPUT)
         else:
             self.controller.pin_mode(self.pin, INPUT)
@@ -111,9 +111,9 @@ class AnalogFloatSensor(Sensor):
         self.msg = AnalogFloat()
         self.msg.header.frame_id = self.frame_id
         
-        self.pub = rospy.Publisher("~sensor/" + self.name, AnalogFloat, queue_size=5)
+        self.pub = rospy.Publisher('~sensor/' + self.name, AnalogFloat, queue_size=5)
         
-        if self.direction == "output":
+        if self.direction == 'output':
             self.controller.pin_mode(self.pin, OUTPUT)
         else:
             self.controller.pin_mode(self.pin, INPUT)
@@ -136,9 +136,9 @@ class DigitalSensor(Sensor):
         self.msg = Digital()
         self.msg.header.frame_id = self.frame_id
         
-        self.pub = rospy.Publisher("~sensor/" + self.name, Digital, queue_size=5)
+        self.pub = rospy.Publisher('~sensor/' + self.name, Digital, queue_size=5)
         
-        if self.direction == "output":
+        if self.direction == 'output':
             self.controller.pin_mode(self.pin, OUTPUT)
         else:
             self.controller.pin_mode(self.pin, INPUT)
@@ -163,7 +163,7 @@ class RangeSensor(Sensor):
         self.msg = Range()
         self.msg.header.frame_id = self.frame_id
         
-        self.pub = rospy.Publisher("~sensor/" + self.name, Range, queue_size=5)
+        self.pub = rospy.Publisher('~sensor/' + self.name, Range, queue_size=5)
         
     def read_value(self):
         self.msg.header.stamp = rospy.Time.now()
@@ -272,5 +272,5 @@ class MaxEZ1Sensor(SonarSensor):
             
 if __name__ == '__main__':
     myController = Controller()
-    mySensor = SonarSensor(myController, "My Sonar", type=Type.PING, pin=0, rate=10)
+    mySensor = SonarSensor(myController, 'My Sonar', type=Type.PING, pin=0, rate=10)
             

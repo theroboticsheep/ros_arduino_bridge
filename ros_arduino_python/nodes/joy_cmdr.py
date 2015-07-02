@@ -32,7 +32,7 @@ class JoyCMDR():
             if self.key == ';':
                 self.joy_msg.axes = [float(x) for x in self.line.split(',') if x.strip()]
                 self.state = 2
-                self.line = ""
+                self.line = ''
                 return
             self.line = self.line + self.key
         
@@ -42,7 +42,7 @@ class JoyCMDR():
                 self.joy_msg.header.stamp = rospy.Time.now()
                 self.pub.publish(self.joy_msg)
                 self.state = 0
-                self.line = ""
+                self.line = ''
                 return
             self.line = self.line + self.key
         
@@ -52,7 +52,7 @@ class JoyCMDR():
                   2 : state_buttons}
         # initial state
         self.state = 0
-        self.line = ""
+        self.line = ''
         
         while 1:
             self.key = sys.stdin.read(1)
@@ -61,7 +61,7 @@ class JoyCMDR():
             # call switch
             states[self.state](self)
             
-        rospy.signal_shutdown("Shutting down joy_cmdr node")
+        rospy.signal_shutdown('Shutting down joy_cmdr node')
 
 if __name__ == '__main__':
     joyCMDR = JoyCMDR()

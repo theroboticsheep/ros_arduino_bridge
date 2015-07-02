@@ -30,17 +30,17 @@ if __name__ == '__main__':
     rospy.init_node('teleop_arm_key')
     settings = termios.tcgetattr(sys.stdin)
     
-    animation = rospy.get_param("animation", "~proto-demo")
-    sequence = rospy.get_param("sequence", "~sequence1")
-    rospy.loginfo("animation: " + animation)
-    rospy.loginfo("sequence: " + sequence)
+    animation = rospy.get_param('animation', '~proto-demo')
+    sequence = rospy.get_param('sequence', '~sequence1')
+    rospy.loginfo('animation: ' + animation)
+    rospy.loginfo('sequence: ' + sequence)
     
     poses = rospy.get_param(animation, dict({}))
     
-    rospy.loginfo("Waiting for rosservice: servo_write")
+    rospy.loginfo('Waiting for rosservice: servo_write')
     rospy.wait_for_service('/arduino_bridge/servo_write')
     servo_write = rospy.ServiceProxy('/arduino_bridge/servo_write', ServoWrite)
-    rospy.loginfo("Connected to rosservice: servo_write")
+    rospy.loginfo('Connected to rosservice: servo_write')
     rospy.loginfo(msg)
     
     done = False
@@ -51,10 +51,10 @@ if __name__ == '__main__':
             if (key == '\x03'):
                 done = True
                 break
-            rospy.loginfo("Pose set: " + pose)
+            rospy.loginfo('Pose set: ' + pose)
             for joint, params in poses[pose].iteritems():
                 servo_write(params['joint_num'],params['joint_angle'])
         if done:
             break
 
-    rospy.signal_shutdown("Shutting down teleop_arm_key node")
+    rospy.signal_shutdown('Shutting down teleop_arm_key node')
