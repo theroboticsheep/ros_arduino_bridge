@@ -21,6 +21,7 @@
 
 """
 
+import rospy
 import thread
 from math import pi as PI, degrees, radians
 import os
@@ -61,7 +62,7 @@ class Arduino:
     
     def connect(self):
         try:
-            rospy.loginfo('Connecting to Arduino on port', self.port, '...')
+            rospy.loginfo('Connecting to Arduino on port: ' + self.port + '...')
             self.port = Serial(port=self.port, baudrate=self.baudrate, timeout=self.timeout, writeTimeout=self.writeTimeout)
             # The next line is necessary to give the firmware time to wake up.
             time.sleep(1)
@@ -71,13 +72,12 @@ class Arduino:
                 test = self.get_baud()   
                 if test != self.baudrate:
                     raise SerialException
-            rospy.loginfo('Connected at', self.baudrate)
+            rospy.loginfo('Connected at: ' + str(self.baudrate))
             rospy.loginfo('Arduino is ready.')
 
         except SerialException:
-            rospy.logerr('Serial Exception:')
-            rospy.logerr(sys.exc_info())
-            rospy.logerr('Traceback follows:')
+            rospy.logerr('Serial Exception: ' + sys.exc_info())
+            rospy.logerr('Traceback follows: ')
             traceback.print_exc(file=sys.stdout)
             rospy.logerr('Cannot connect to Arduino!')
             os._exit(1)
@@ -241,7 +241,7 @@ class Arduino:
             attempts += 1
         except:
             self.mutex.release()
-            rospy.logerr('execute_ack exception when executing', cmd)
+            rospy.logerr('execute_ack exception when executing' + cmd)
             rospy.logerr(sys.exc_info())
             return 0
         

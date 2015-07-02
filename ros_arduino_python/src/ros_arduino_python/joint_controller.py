@@ -78,7 +78,7 @@ class HobbyServo:
             Returns output value in radians. """
         self.desired = position
         self.dirty = True
-        msg = self.name + ': new desired position set - ' + position
+        msg = self.name + ': new desired position set - ' + str(position)
         rospy.logdebug(msg)
 
     def commandCb(self, req):
@@ -116,7 +116,7 @@ class JointController:
         rospy.Subscriber(self.name+'/command', JointTrajectory, self.commandCb)
         self.executing = False
 
-        msg = 'Started FollowController: ' + self.name
+        msg = self.name +': FollowController started'
         rospy.loginfo(msg)
         self.server.start()
         
@@ -134,7 +134,7 @@ class JointController:
                 if joint.dirty:
                     self.arduino.servo_write(joint.id, joint.desired)
                     joint.dirty = False
-                    msg = joint.name + ': position set - ' + joint.desired
+                    msg = joint.name + ': position set - ' + str(joint.desired)
                     rospy.logdebug(msg)
 
             msg = JointState()
@@ -197,7 +197,7 @@ class JointController:
         self.executing = False    
 
     def executeTrajectory(self, traj):
-        msg = 'Executing trajectory'
+        msg = self.name + ': Executing trajectory'
         rospy.loginfo(msg)
         rospy.logdebug(traj)
         # carry out trajectory
