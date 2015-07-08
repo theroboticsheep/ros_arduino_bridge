@@ -34,6 +34,7 @@ class BaseController:
     def __init__(self, arduino, base_frame):
         self.arduino = arduino
         self.base_frame = base_frame
+        self.odom_frame = rospy.get_param('~odom_frame', 'odom')
         self.rate = float(rospy.get_param('~base_controller_rate', 10))
         self.timeout = rospy.get_param('~base_controller_timeout', 1.0)
         self.stopped = False
@@ -170,11 +171,11 @@ class BaseController:
                 (quaternion.x, quaternion.y, quaternion.z, quaternion.w),
                 rospy.Time.now(),
                 self.base_frame,
-                'odom'
+                self.odom_frame
                 )
     
             odom = Odometry()
-            odom.header.frame_id = 'odom'
+            odom.header.frame_id = self.odom_frame
             odom.child_frame_id = self.base_frame
             odom.header.stamp = now
             odom.pose.pose.position.x = self.x
