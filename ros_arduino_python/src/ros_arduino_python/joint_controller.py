@@ -151,13 +151,27 @@ class JointController:
             msg.position = list()
             msg.velocity = list()
             for joint in self.joints:
-                msg.name.append(joint.name)
-                if (joint.name != 'left_gripper_joint') and (joint.name != 'right_gripper_joint'):
-                    msg.position.append(joint.position)
-                # Publish gripper joint as distance, not radian
+                # Publish gripper joint as distance, not radian. Mimic position for "fake" joint.
+                if joint_name is 'left_gripper_joint':
+                    gripper_distance = self.scaleGripperRadiansToMeters(joint.position)
+                    msg.name.append(joint.name)
+                    msg.position.append(gripper_distance)
+                    msg.velocity.append(joint.velocity)
+                    msg.name.append('left_gripper_joint_fake')
+                    msg.position.append(gripper_distance)
+                    msg.velocity.append(joint.velocity)
+                elif joint_name is 'right_gripper_joint':
+                    gripper_distance = self.scaleGripperRadiansToMeters(joint.position)
+                    msg.name.append(joint.name)
+                    msg.position.append(gripper_distance)
+                    msg.velocity.append(joint.velocity)
+                    msg.name.append('right_gripper_joint_fake')
+                    msg.position.append(gripper_distance)
+                    msg.velocity.append(joint.velocity)
                 else:
-                    msg.position.append(self.scaleGripperRadiansToMeters(joint.position))
-                msg.velocity.append(joint.velocity)
+                    msg.name.append(joint.name)
+                    msg.position.append(joint.position)
+                    msg.velocity.append(joint.velocity)
             self.pub.publish(msg)
             self.t_next = rospy.Time.now() + self.t_delta
 
