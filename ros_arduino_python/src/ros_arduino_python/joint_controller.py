@@ -125,9 +125,9 @@ class JointController:
     def scaleGripperRadiansToMeters(self, input):
         gripper_width_m = 0.036
         gripper_width_deg = 135.0
-        in_closed = -radians(self.gripper_width_deg)/2
-        in_open = radians(self.gripper_width_deg)/2
-        out_closed = self.gripper_width_m/2
+        in_closed = -radians(gripper_width_deg)/2
+        in_open = radians(gripper_width_deg)/2
+        out_closed = gripper_width_m/2
         out_open = 0
         return ((input - in_closed) * (out_open - out_closed) / (in_open - in_closed) + out_closed)
 
