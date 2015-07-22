@@ -121,7 +121,15 @@ class JointController:
         self.server.start()
         
         self.pub = rospy.Publisher('joint_states', JointState, queue_size=5)
-
+        
+    def scaleGripperRadiansToMeters(self, input):
+        gripper_width_m = 0.036
+        gripper_width_deg = 135.0
+        in_closed = -radians(self.gripper_width_deg)/2
+        in_open = radians(self.gripper_width_deg)/2
+        out_closed = self.gripper_width_m/2
+        out_open = 0
+        return ((input - in_closed) * (out_open - out_closed) / (in_open - in_closed) + out_closed)
 
     def poll(self):
         if rospy.Time.now() > self.t_next:
@@ -144,9 +152,11 @@ class JointController:
             msg.velocity = list()
             for joint in self.joints:
                 msg.name.append(joint.name)
-                # don't publish gripper position here because it has been converted to radians
                 if (joint.name != 'left_gripper_joint') and (joint.name != 'right_gripper_joint'):
                     msg.position.append(joint.position)
+                # Publish gripper joint as distance, not radian
+                else:
+                    msg.position.append(self.scaleGripperRadiansToMeters(joint.position))
                 msg.velocity.append(joint.velocity)
             self.pub.publish(msg)
             self.t_next = rospy.Time.now() + self.t_delta
