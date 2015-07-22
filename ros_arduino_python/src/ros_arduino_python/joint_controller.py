@@ -144,7 +144,9 @@ class JointController:
             msg.velocity = list()
             for joint in self.joints:
                 msg.name.append(joint.name)
-                msg.position.append(joint.position)
+                # don't publish gripper position here because it has been converted to radians
+                if (joint.name != 'left_gripper_joint') and (joint.name != 'right_gripper_joint'):
+                    msg.position.append(joint.position)
                 msg.velocity.append(joint.velocity)
             self.pub.publish(msg)
             self.t_next = rospy.Time.now() + self.t_delta

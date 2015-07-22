@@ -47,7 +47,8 @@ class ParallelGripperModel:
         self.joint_name = rospy.get_param('~joint_name', 'gripper_joint')
 
         # publishers
-        self.pub = rospy.Publisher(self.joint_name+'/command', Float64, queue_size=5)
+        self.pub_cmd = rospy.Publisher(self.joint_name+'/command', Float64, queue_size=5)
+        self.pub_joint = rospy.Publisher('joint_states', JointState, queue_size=5)
 
     def scaleInput(self, input):
         in_closed = self.gripper_width_m/2
@@ -57,7 +58,16 @@ class ParallelGripperModel:
         return ((input - in_closed) * (out_open - out_closed) / (in_open - in_closed) + out_closed)
 
     def setCommand(self, command):
-        self.pub.publish(self.scaleInput(command.position))
+        self.pub_cmd.publish(self.scaleInput(command.position))
+        
+        # publish non scaled joint position
+        msg = JointState()
+        msg.header.stamp = rospy.Time.now()
+        msg.name = list()
+        msg.position = list()
+        msg.name.append(self.joint_name)
+        msg.position.append(command.position)
+        self.pub_joint.publish(msg)
 
     def getPosition(self, joint_states):
         return 0.0
