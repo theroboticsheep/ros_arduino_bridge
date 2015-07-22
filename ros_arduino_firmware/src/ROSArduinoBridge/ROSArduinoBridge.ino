@@ -94,7 +94,7 @@
 #ifdef USE_SERVOS
    #include <Servo.h>
    #include "servos.h"
-   #define HOBBY_SERVO_MIN 3
+   #define HOBBY_SERVO_MIN 0
    #define HOBBY_SERVO_MAX 180
 #endif
 
