@@ -15,7 +15,7 @@ base_controller_rate: 10
 
 # For a robot that uses base_footprint, change base_frame to base_footprint
 base_frame: up1_footprint
-odom_frame: odom
+odom_frame: odom_combined
 
 # === Robot drivetrain parameters
 wheel_diameter: 0.0625
