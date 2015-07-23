@@ -152,7 +152,7 @@ class JointController:
             msg.velocity = list()
             for joint in self.joints:
                 # Publish gripper joint as distance, not radian. Mimic position for "fake" joint.
-                if joint_name is 'left_gripper_joint':
+                if joint.name == 'left_gripper_joint':
                     gripper_distance = self.scaleGripperRadiansToMeters(joint.position)
                     msg.name.append(joint.name)
                     msg.position.append(gripper_distance)
@@ -160,7 +160,7 @@ class JointController:
                     msg.name.append('left_gripper_joint_fake')
                     msg.position.append(gripper_distance)
                     msg.velocity.append(joint.velocity)
-                elif joint_name is 'right_gripper_joint':
+                elif joint.name == 'right_gripper_joint':
                     gripper_distance = self.scaleGripperRadiansToMeters(joint.position)
                     msg.name.append(joint.name)
                     msg.position.append(gripper_distance)
