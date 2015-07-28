@@ -31,15 +31,15 @@ class TeleopArmJoy():
         rospy.loginfo(self.msg)
         
         buttons = [['a',0],['b',1],['y',3],['LB',4],['back',8],['start',9],['power',16],['left_stick',10],['right_stick',11]]
-        button_list = dict()
+        self.button_list = dict()
         for button in buttons:
-            button_list[button[0]] = Button(button[0],button[1], self.poses, self.updroid_servo_write)
+            self.button_list[button[0]] = Button(button[0],button[1], self.poses, self.updroid_servo_write)
         
         rospy.Subscriber('joy', Joy, self.callback)
 
 
         #Set button sequences
-        button_list['a'].setSequence('sequence_x')
+        self.button_list['a'].setSequence('sequence_a')
 
 
 
@@ -49,12 +49,13 @@ class TeleopArmJoy():
     def callback(self, data):
         now = rospy.Time.now()
         
-        for button in self.button_list:
+        for key, button in self.button_list.iteritems():
             if now > button.t_next:
-                button.doPose()
-                button.t_next = now + button.t_delta
+                if data.buttons[button.button_id]:
+                    button.doPose()
+                    button.t_next = now + button.t_delta
         
-class Button():
+class Button:
     def __init__(self, button_name, button_id, poses, updroid_servo_write):
         self.button_name = button_name
         self.button_id = button_id
