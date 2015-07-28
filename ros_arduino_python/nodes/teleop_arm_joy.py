@@ -62,7 +62,6 @@ class TeleopArmJoy():
     def doPose(self, pose):
         rospy.loginfo('Pose set: ' + pose)
         for joint, params in self.poses[pose].iteritems():
-            temp = 1
             self.servo_write(params['joint_num'],params['joint_angle'])
 
     def callback(self, data):

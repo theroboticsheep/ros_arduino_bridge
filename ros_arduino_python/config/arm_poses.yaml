@@ -1,5 +1,5 @@
 proto-demo: {
-  sequence1: [home, up, rest],
+  sequence1: [home, up, pick, grasp, rest],
   sequence_a: [pick-right, rest-right],
   sequence_b: [pick-left, rest-left],
   sequence_x: [rest],
@@ -103,6 +103,35 @@ proto-demo: {
       left_armlink2_to_armlink3:  {joint_num: 8,  joint_angle: -1.5705},
       left_armlink3_to_armlink4:  {joint_num: 9,  joint_angle: 1.5705},
       left_armlink4_to_armlink5:  {joint_num: 10, joint_angle: -0.5235}
+  },
+
+  grasp: {
+      right_armroot_to_armlink1:  {joint_num: 0,  joint_angle: 1.0471},
+      right_armlink1_to_armlink2: {joint_num: 1,  joint_angle: -1.5707},
+      right_armlink2_to_armlink3: {joint_num: 2,  joint_angle: 0.3489},
+      right_armlink3_to_armlink4: {joint_num: 3,  joint_angle: -0.4487},
+      right_armlink4_to_armlink5: {joint_num: 4,  joint_angle: -1.0471},
+      left_armroot_to_armlink1:   {joint_num: 6,  joint_angle: -1.0471},
+      left_armlink1_to_armlink2:  {joint_num: 7,  joint_angle: 1.5707},
+      left_armlink2_to_armlink3:  {joint_num: 8,  joint_angle: -0.3489},
+      left_armlink3_to_armlink4:  {joint_num: 9,  joint_angle: 0.4487},
+      left_armlink4_to_armlink5:  {joint_num: 10, joint_angle: -1.0471}
+  },
+
+  grasp-right: {
+      right_armroot_to_armlink1:  {joint_num: 0,  joint_angle: 1.0471},
+      right_armlink1_to_armlink2: {joint_num: 1,  joint_angle: -1.5707},
+      right_armlink2_to_armlink3: {joint_num: 2,  joint_angle: 0.3489},
+      right_armlink3_to_armlink4: {joint_num: 3,  joint_angle: -0.4487},
+      right_armlink4_to_armlink5: {joint_num: 4,  joint_angle: -1.0471}
+  },
+
+  grasp-left: {
+      left_armroot_to_armlink1:   {joint_num: 6,  joint_angle: -1.0471},
+      left_armlink1_to_armlink2:  {joint_num: 7,  joint_angle: 1.5707},
+      left_armlink2_to_armlink3:  {joint_num: 8,  joint_angle: -0.3489},
+      left_armlink3_to_armlink4:  {joint_num: 9,  joint_angle: 0.4487},
+      left_armlink4_to_armlink5:  {joint_num: 10, joint_angle: -1.0471}
   },
 
   up: {
