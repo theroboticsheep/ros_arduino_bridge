@@ -70,6 +70,7 @@ proto-demo: {
   },
   
   pick-left: {
+      left_armroot_to_armlink1:   {joint_num: 6,  joint_angle: 0},
       left_armlink1_to_armlink2:  {joint_num: 7,  joint_angle: 1.5707},
       left_armlink2_to_armlink3:  {joint_num: 8,  joint_angle: 0.7854},
       left_armlink3_to_armlink4:  {joint_num: 9,  joint_angle: -1.5707},
