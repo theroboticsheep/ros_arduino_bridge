@@ -1,7 +1,0 @@
-<launch>
-   <arg name="animation" default="~proto-demo" />
-   <rosparam param="animation" subst_value="True">$(arg animation)</rosparam>
-   <node name="teleop_arm_joy" pkg="ros_arduino_python" type="teleop_arm_joy.py" output="screen">
-      <rosparam file="$(find ros_arduino_python)/config/arm_poses.yaml" command="load" />
-   </node>
-</launch>

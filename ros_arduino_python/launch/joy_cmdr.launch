@@ -1,3 +1,0 @@
-<launch>
-   <node name="joy_cmdr" pkg="ros_arduino_python" type="joy_cmdr.py" output="screen" />
-</launch>
