@@ -76,7 +76,8 @@ class Arduino:
             rospy.loginfo('Arduino is ready.')
 
         except SerialException:
-            rospy.logerr('Serial Exception: ' + sys.exc_info())
+            rospy.logerr('Serial Exception: ')
+            rospy.logerr(sys.exc_info())
             rospy.logerr('Traceback follows: ')
             traceback.print_exc(file=sys.stdout)
             rospy.logerr('Cannot connect to Arduino!')
